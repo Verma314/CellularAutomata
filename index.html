@@ -1,0 +1,229 @@
+<html>
+<head>
+    <style>
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        #parent {
+            margin: auto;
+            width: 2000px;
+            height: 2000px;
+            background-color: black;
+            box-sizing: border-box;
+            border-style: solid;
+        }
+
+        .rectangle {
+            margin: 0%;
+            width: 10%;
+            height: 10%;
+            background-color: white;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body onload='draw()'>
+    <div id="parent"></div>
+
+    <script>
+
+        function makeAlive(elementId) {
+            document.getElementById(elementId).style.backgroundColor = 'black';
+        }
+
+        function makeDie(elementId) {
+            document.getElementById(elementId).style.backgroundColor = 'white';
+        }
+
+        function isElementAlive(ele) {
+            if (document.getElementById(ele) == null )
+                return false;
+            if (ele < 0) 
+                return false;
+            if (document.getElementById(ele).style.backgroundColor == 'black') {
+                return true;
+            } return false;
+        }
+
+        //black == alive
+        function findLeftElement(element) {
+            if (element % 10 == 0) {
+                return -1;
+            }
+            return element - 1;
+        }
+
+        function findRightElement(element) {
+            if (element % 10 == 9) {
+                return -1;
+            } return element + 1;
+        }
+
+        function findTopElement(element) {
+            if (element >= 0 && element <= 9) {
+                return -1;
+            }
+            return element - 10;
+        }
+
+        function findBottomElement(element) {
+            if (element >= 90) {
+                return -1;
+            }
+            return element + 10;
+        }
+
+        function findTopLeftElement(element) {
+            return findTopElement(element) - 1;
+        }
+        function findTopRightElement(element) {
+            return findTopElement(element) + 1;
+        }
+        function findBottomLeftElement(element) {
+            return findBottomElement(element) - 1;
+        }
+        function findBottomRightElement(element) {
+            return findBottomElement(element) + 1;
+        }
+
+
+        function findAliveNeighbours () {
+            alivePeople = []
+            for ( let p = 0; p < 100; p++ ) {
+                if (document.getElementById(p).style.backgroundColor == 'black') {
+                    alivePeople.push ( p );
+                }
+            }
+            return alivePeople;
+        }
+
+        function isElementAlive (array, element ) {
+            if ( array.includes(element))
+                return 1;
+                else  return 0;
+
+        } 
+
+
+        function seedLife() {
+            aliveElements = [46,37,48,62,94,86,16,45,23,56,11,78,23,67,32];
+            //aliveElements = [46,37,44,47,34,75,78,23,67,32,42,23];
+
+            return aliveElements;
+        }
+
+
+        function renderAliveElements (aliveElements ) {
+                for ( var k = 0 ; k < 100; k++ ) {
+                    document.getElementById(k).style.backgroundColor = 'white';
+                }
+                aliveElements.forEach ( ele => {
+                    document.getElementById(ele).style.backgroundColor = 'black';
+                });
+        }
+
+        
+        function countLiveNeighbours(ele, aliveElements) {
+            var neigh1 = findTopElement( ele);
+            var neigh2 = findBottomElement(ele);
+            var neigh3 = findLeftElement (ele);
+            var neigh4 = findRightElement(ele);
+            var neigh5 = findTopLeftElement(ele);
+            var neigh6 = findTopRightElement(ele);
+            var neigh7 = findBottomLeftElement(ele);
+            var neigh8 = findBottomRightElement(ele);
+            var numberOfAliveElements = 0;
+
+            if ( aliveElements.includes(neigh1) ) {
+                numberOfAliveElements += 1;
+            }
+            
+            if ( aliveElements.includes(neigh2) ) {
+                numberOfAliveElements += 1;
+            }
+            
+            if ( aliveElements.includes(neigh3) ) {
+                numberOfAliveElements += 1;
+            }
+
+            if ( aliveElements.includes(neigh4) ) {
+                numberOfAliveElements += 1;
+            }
+
+            if ( aliveElements.includes(neigh5) ) {
+                numberOfAliveElements += 1;
+            }
+
+            if ( aliveElements.includes(neigh6) ) {
+                numberOfAliveElements += 1;
+            }
+
+            if ( aliveElements.includes(neigh7) ) {
+                numberOfAliveElements += 1;
+            }
+
+            if ( aliveElements.includes(neigh8) ) {
+                numberOfAliveElements += 1;
+            }
+
+            return numberOfAliveElements;
+        }
+
+        //rules:
+        function checkAliveElementsAndCreateNewSetOfAliveElements ( aliveElements ) {
+                newSetOfAliveElements = [];
+                for (var ele = 0; ele < 100; ele++) {
+                    if ( aliveElements.includes(ele) ) {
+                        countOfLiveNeighbours = countLiveNeighbours(ele, aliveElements);
+                        if ( countOfLiveNeighbours == 2 ||  countOfLiveNeighbours == 3 ) 
+                            newSetOfAliveElements.push(ele);
+                        
+                    } 
+                    else {
+                        countOfLiveNeighbours = countLiveNeighbours(ele, aliveElements);
+                        if ( countOfLiveNeighbours == 3) 
+                            newSetOfAliveElements.push(ele);
+
+
+                    }
+                }
+
+                return newSetOfAliveElements;
+
+        }
+
+        function draw() {
+
+            let parent = document.getElementById('parent');
+            let rectangles = [];
+            let rectangleHealth = [];
+
+            for (var ele = 0; ele < 100; ele++) {
+                rectangles.push(ele);
+            }
+            rectangles.forEach(rectangle => parent.innerHTML += `<div class="rectangle" id=${rectangle}></div>`);
+
+
+            let i = 0;
+            aliveElements = seedLife();
+            setInterval(() => {
+                console.log ( 'alive elements : ', aliveElements);
+                renderAliveElements(aliveElements);
+                aliveElements = checkAliveElementsAndCreateNewSetOfAliveElements(aliveElements);
+                
+            }, 600);
+            console.log('rendering');
+
+
+        }
+
+    </script>
+</body>
+</html>
